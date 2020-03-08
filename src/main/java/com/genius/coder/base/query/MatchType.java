@@ -15,7 +15,9 @@ public enum MatchType {
     lessOrEqualNum,
     notEq,
     greaterDate,
+    greaterOrEqualDate,
     lessDate,
+    lessOrEqualDate,
     Null,
     startWith,
     endWith,
@@ -25,8 +27,5 @@ public enum MatchType {
     inDayUseOnLocalDateTime,
     inDate,
     isMember,
-    isTrueOrFalse;
-
-    private MatchType() {
-    }
+    isTrueOrFalse
 }

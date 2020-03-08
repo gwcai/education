@@ -52,11 +52,12 @@ public class WeChatController {
         } catch (AesException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+            return e.getMessage();
         }
         if (jiami.equals(signature)) {
             return echostr;
         }
-        return null;
+        return jiami;
     }
 
     /***

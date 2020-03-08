@@ -1,26 +1,21 @@
 package com.genius.coder.base.impl;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.genius.coder.base.dao.BaseRepository;
 import com.genius.coder.base.query.BaseQuery;
 import com.genius.coder.base.query.MatchType;
 import com.genius.coder.base.query.QueryWord;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
-import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author GaoWeicai.(lili14520 @ gmail.com)
@@ -46,7 +41,8 @@ public class BaseRepositoryImpl<T,ID> extends SimpleJpaRepository<T, ID> impleme
 
     public long count(BaseQuery baseQuery) {
         Class<T> classType = baseQuery.entityClassType();
-        return 0L;
+        Specification spec = parseSpecification(classType);
+        return this.count(spec);
     }
 
     public Specification<T> parseSpecification(Class<T> classType) {
@@ -90,10 +86,53 @@ public class BaseRepositoryImpl<T,ID> extends SimpleJpaRepository<T, ID> impleme
             if (fieldValue == null) {
                 return null;
             }
-            Path<String> f = root.get(key);
             switch (matchType) {
-                case eq:
-                    return cb.equal(f, fieldValue);
+                case eq: return cb.equal(root.get(key), fieldValue);
+                case like:
+                    return cb.like(root.get(key),"%" + fieldValue + "%");
+                case notLike:
+                    return cb.notLike(root.get(key),"%" + fieldValue + "%");
+                case in:
+                    return cb.in(root.get(key));
+                case greaterNum: {
+                    ParameterExpression<Number> param = cb.parameter(Number.class, key);
+                    return cb.gt(root.get(key),param);
+                }
+                case greaterOrEqualNum:{
+                    ParameterExpression<Number> param = cb.parameter(Number.class, key);
+                    return cb.ge(root.get(key),param);
+                }
+                case lessNum: {
+                    ParameterExpression<Number> param = cb.parameter(Number.class, key);
+                    return cb.lt(root.get(key),param);
+                }
+                case lessOrEqualNum:{
+                    ParameterExpression<Number> param = cb.parameter(Number.class, key);
+                    return cb.le(root.get(key),param);
+                }
+                case notEq: return cb.notEqual(root.get(key),fieldValue);
+                case greaterDate:{
+                    ParameterExpression<Date> param = cb.parameter(Date.class, key);
+                    return cb.greaterThan(root.<Date>get(key),param);
+                }
+                case lessDate:{
+                    ParameterExpression<Date> param = cb.parameter(Date.class, key);
+                    return cb.lessThan(root.<Date>get(key),param);
+                }
+                case greaterOrEqualDate:{
+                    ParameterExpression<Date> param = cb.parameter(Date.class, key);
+                    return cb.greaterThanOrEqualTo(root.<Date>get(key),param);
+                }
+                case lessOrEqualDate:{
+                    ParameterExpression<Date> param = cb.parameter(Date.class, key);
+                    return cb.lessThanOrEqualTo(root.<Date>get(key),param);
+                }
+                case  Null: return cb.isNull(root.get(key));
+                case  startWith: return cb.like(root.get(key),fieldValue + "%");
+                case  endWith: return cb.like(root.get(key),"%" + fieldValue);
+                case  NotNull: return cb.isNotNull(root.get(key));
+                case  isMember: return cb.isMember(fieldValue,root.get(key));
+                case  isTrueOrFalse: return cb.isTrue(root.get(key));
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
