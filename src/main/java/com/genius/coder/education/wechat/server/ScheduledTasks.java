@@ -3,13 +3,11 @@ package com.genius.coder.education.wechat.server;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.genius.coder.education.properties.WeChatProperties;
 import com.genius.coder.education.redis.RedisService;
-import com.genius.coder.education.util.HttpClientUtil;
+import com.genius.coder.education.util.HttpsClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 
 import static com.genius.coder.education.wechat.server.util.AccessTokenUtil.WECHAT_JSAPI_TICKET;
 import static com.genius.coder.education.wechat.server.util.AccessTokenUtil.WECHAT_TOKEN_KEY;
@@ -47,7 +45,7 @@ public class ScheduledTasks {
     @Scheduled(fixedDelay = SCHEDULED_TIME)
     public void refreshApiToken() {
         try {
-            JsonNode jsonNode = HttpClientUtil.get(GET_TOKEN_URL.replace("$appid", weChatProperties.getAppID())
+            JsonNode jsonNode = HttpsClientUtil.get(GET_TOKEN_URL.replace("$appid", weChatProperties.getAppID())
                     .replace("$secret", weChatProperties.getAppSecret()));
             JsonNode resultNode = jsonNode.get(ACCESS_TOKEN);
             if (resultNode == null) {
@@ -60,14 +58,14 @@ public class ScheduledTasks {
 
             //获取jsapi票据
             getJSAPITicket(accessToken);
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("获取微信api accessToken失败：", e);
         }
     }
 
     private void getJSAPITicket(String accessToken) {
         try {
-            JsonNode jsonNode = HttpClientUtil.get(GET_JSAPI_TICKET_URL.replace("ACCESS_TOKEN", accessToken));
+            JsonNode jsonNode = HttpsClientUtil.get(GET_JSAPI_TICKET_URL.replace("ACCESS_TOKEN", accessToken));
             int errorCode = jsonNode.get("errcode").asInt();
             if (0 != errorCode) {
                 log.error("获取JS临时票据失败：{}", jsonNode.get("errmsg"));
@@ -76,7 +74,7 @@ public class ScheduledTasks {
             String ticket = jsonNode.get("ticket").asText();
             redisService.setex(WECHAT_JSAPI_TICKET, ticket, 60 * 120);
             log.info("刷新js api ticket成功!");
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("获取JS临时票据异常：{}", e.getMessage());
         }
     }

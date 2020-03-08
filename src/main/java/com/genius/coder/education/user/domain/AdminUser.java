@@ -1,15 +1,13 @@
 package com.genius.coder.education.user.domain;
 
 import com.genius.coder.education.user.enums.StatusEnum;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.cfg.annotations.Comment;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.domain.Persistable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
@@ -19,11 +17,11 @@ import java.time.LocalDateTime;
  */
 @Entity(name = "admin_user")
 //@Comment("用户表")
-@Getter
-@Setter
+@Data
 public class AdminUser implements Persistable<String> {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
 
     //@Comment("你懂的")
@@ -53,7 +51,7 @@ public class AdminUser implements Persistable<String> {
     private String headimgurl;
 
     @CreatedDate
-    //@Comment("注册时间")
+    @Comment("注册时间")
     @Column(updatable = false)
     private LocalDateTime createdDate;
 
@@ -62,5 +60,4 @@ public class AdminUser implements Persistable<String> {
     public boolean isNew() {
         return StringUtils.isBlank(id);
     }
-
 }

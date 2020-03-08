@@ -1,7 +1,7 @@
 package com.genius.coder.base.service;
 
-import com.genius.coder.base.query.BaseQuery;
 import com.genius.coder.base.dao.BaseRepository;
+import com.genius.coder.base.query.BaseQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

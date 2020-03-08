@@ -1,9 +1,9 @@
 package com.genius.coder.base.domain;
 
-import com.genius.coder.base.form.BaseAuditable;
 import org.springframework.data.annotation.*;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -12,6 +12,7 @@ import java.util.Optional;
  * @author GaoWeicai.(lili14520 @ gmail.com)
  * @date 2020/3/5
  */
+@MappedSuperclass
 public class BaseDomain<U extends Serializable> implements BaseAuditable<U, String> {
     private static final long serialVersionUID = 1L;
     @Id

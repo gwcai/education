@@ -1,4 +1,4 @@
-package com.genius.coder.base.form;
+package com.genius.coder.base.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

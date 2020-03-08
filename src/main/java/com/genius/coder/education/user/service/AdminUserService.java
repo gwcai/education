@@ -5,8 +5,8 @@ import com.genius.coder.education.user.domain.AdminUser;
 import org.springframework.stereotype.Service;
 
 /**
- * @author lqb
- * @date 2018/8/15 16:57
+ * @author GaoWeicai.(lili14520 @ gmail.com)
+ * @date 2020/3/5
  */
 @Service
 public class AdminUserService extends BaseService<AdminUser,String> {

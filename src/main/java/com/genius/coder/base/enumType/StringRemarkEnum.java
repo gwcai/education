@@ -1,4 +1,4 @@
-package com.genius.coder.base.util;
+package com.genius.coder.base.enumType;
 
 /**
  * @author GaoWeicai.(lili14520 @ gmail.com)

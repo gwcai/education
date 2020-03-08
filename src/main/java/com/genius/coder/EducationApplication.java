@@ -1,6 +1,7 @@
 package com.genius.coder;
 
 import com.genius.coder.base.form.PageForm;
+import com.genius.coder.base.impl.BaseRepositoryImpl;
 import com.genius.coder.education.common.AdminUserAware;
 import com.genius.coder.education.common.UserHandlerMethodArgumentResolver;
 import com.genius.coder.education.properties.TokenRedisProperties;
@@ -10,10 +11,6 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -21,6 +18,8 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -38,12 +37,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.service.Parameter;
 import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Parameter;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -54,13 +53,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@EnableJpaAuditing
 @EnableResourceServer
 @EnableConfigurationProperties(TokenRedisProperties.class)
-@SpringBootApplication(scanBasePackages = "com.genius.coder.education", exclude = {DataSourceAutoConfiguration.class,
-        JdbcTemplateAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class,
-        RedisRepositoriesAutoConfiguration.class})
+@SpringBootApplication
 @EnableSwagger2
+@EnableJpaRepositories(repositoryBaseClass = BaseRepositoryImpl.class)
 public class EducationApplication extends ResourceServerConfigurerAdapter implements WebMvcConfigurer{
 
     public static void main(String[] args) {

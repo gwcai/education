@@ -1,4 +1,4 @@
-package com.genius.coder.base.form;
+package com.genius.coder.base.domain;
 
 import org.springframework.data.domain.Auditable;
 

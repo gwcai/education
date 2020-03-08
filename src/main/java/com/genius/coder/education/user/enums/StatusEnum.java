@@ -1,6 +1,6 @@
 package com.genius.coder.education.user.enums;
 
-import com.genius.coder.base.util.StringRemarkEnum;
+import com.genius.coder.base.enumType.StringRemarkEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

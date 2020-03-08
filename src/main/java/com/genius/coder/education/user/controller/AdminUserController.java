@@ -1,7 +1,7 @@
 package com.genius.coder.education.user.controller;
 
-import com.genius.coder.base.form.BaseDataResponse;
 import com.genius.coder.base.controller.VueController;
+import com.genius.coder.base.form.BaseDataResponse;
 import com.genius.coder.education.redis.RedisService;
 import com.genius.coder.education.user.domain.AdminUser;
 import com.genius.coder.education.user.form.AdminUserForm;
