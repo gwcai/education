@@ -21,8 +21,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -71,26 +69,6 @@ public class EducationApplication extends ResourceServerConfigurerAdapter implem
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
         resources.stateless(true).tokenStore(tokenStore);
-    }
-
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                .and().authorizeRequests()
-                .antMatchers("/v2/api-docs/**",
-                        "/swagger-ui.html",
-                        "/swagger-resources/**",
-                        "/webjars/**",
-                        "/user/bindPhone",
-                        "/sms/code/**",
-                        "/oauth/**",
-                        "/wx/**",
-                        "/pay/wx/notify/order",
-                        "/pay/alipay/notify",
-                        "/pay/alipay/return"
-                ).permitAll()
-                .anyRequest().authenticated();
-        http.headers().frameOptions().disable();
     }
 
     /**

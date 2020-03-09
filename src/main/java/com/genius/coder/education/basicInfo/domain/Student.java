@@ -1,12 +1,13 @@
 package com.genius.coder.education.basicInfo.domain;
 
 import com.genius.coder.base.domain.BaseDomain;
+import com.genius.coder.education.user.domain.AdminUser;
 import lombok.Data;
 import org.hibernate.cfg.annotations.Comment;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author GaoWeicai.(lili14520 @ gmail.com)
@@ -14,7 +15,7 @@ import java.util.Date;
  */
 @Entity(name = "student")
 @Data
-public class Student extends BaseDomain<String> {
+public class Student extends BaseDomain<AdminUser,String> {
     @Comment("学号")
     @Column(unique = true)
     private String no;
@@ -38,4 +39,7 @@ public class Student extends BaseDomain<String> {
     @Comment("二维码图片，上课时使用")
     @Column(length = 1024)
     private String imgCode;
+
+    @OneToMany(mappedBy = "student",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<CardInfo> cardList;
 }

@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -16,38 +17,38 @@ import java.time.LocalDateTime;
  * 主键使用微信UnionId
  */
 @Entity(name = "admin_user")
-//@Comment("用户表")
+@Comment("用户表")
 @Data
-public class AdminUser implements Persistable<String> {
+public class AdminUser implements Persistable<String>, Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
 
-    //@Comment("你懂的")
+    @Comment("你懂的")
     private String password;
 
-    //    @Comment("姓名")
+    @Comment("姓名")
     private String name;
 
-    //    @Comment("手机号，目前手机号当做登录名")
+    @Comment("手机号，目前手机号当做登录名")
+    private String phoneNo;
 
-    private String phoneNum;
-
-    //    @Enumerated(EnumType.STRING)
-//    @Comment("账号状态")
+    @Enumerated(EnumType.STRING)
+    @Comment("账号状态")
     private StatusEnum status = StatusEnum.ENABLE;
 
-    //微信unionid
+    @Comment("微信unionid")
     private String unionid;
 
-    //微信用户openid
+    @Comment("微信用户openid")
     private String openid;
 
-    //性别
+    @Comment("性别")
     private Integer sex;
 
-    //头像
+    @Comment("头像路径")
     private String headimgurl;
 
     @CreatedDate

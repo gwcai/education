@@ -125,6 +125,11 @@
             <artifactId>hibernate-core</artifactId>
             <version>5.3.3.Final</version>
         </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-core</artifactId>
+            <version>4.4.5</version>
+        </dependency>
     </dependencies>
 
     <build>

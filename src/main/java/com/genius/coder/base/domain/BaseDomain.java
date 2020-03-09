@@ -1,8 +1,12 @@
 package com.genius.coder.base.domain;
 
-import org.springframework.data.annotation.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -13,10 +17,10 @@ import java.util.Optional;
  * @date 2020/3/5
  */
 @MappedSuperclass
-public class BaseDomain<U extends Serializable> implements BaseAuditable<U, String> {
+public class BaseDomain<U extends Serializable,ID> implements BaseAuditable<U, ID> {
     private static final long serialVersionUID = 1L;
     @Id
-    protected String id;
+    protected ID id;
     @CreatedBy
     protected U createdBy;
     protected String createdUserName;
@@ -70,11 +74,11 @@ public class BaseDomain<U extends Serializable> implements BaseAuditable<U, Stri
         this.createdUserName = createdUserName;
     }
 
-    public void setId(String s) {
+    public void setId(ID s) {
         this.id = s;
     }
 
-    public String getId() {
+    public ID getId() {
         return this.id;
     }
 

@@ -29,7 +29,11 @@ public class AdminUserController extends VueController<AdminUser,String> {
         return getForm(service.findOneOrElseThrow(id));
     }
 
-
+    /***
+     * 微信端绑定手机号码
+     * @param userPhoneForm
+     * @return
+     */
     @PostMapping("bindPhone")
     public BaseDataResponse bindPhone(@RequestBody UserPhoneForm userPhoneForm) {
         String code = redisService.get(userPhoneForm.getPhoneNum());
@@ -40,13 +44,13 @@ public class AdminUserController extends VueController<AdminUser,String> {
             return BaseDataResponse.fail().msg("验证码错误!");
         }
         AdminUser adminUser = service.findOneOrElseThrow(userPhoneForm.getUserId());
-        adminUser.setPhoneNum(userPhoneForm.getPhoneNum());
+        adminUser.setPhoneNo(userPhoneForm.getPhoneNum());
         service.save(adminUser);
         return BaseDataResponse.ok().msg("绑定手机成功!");
     }
 
     @Override
     protected AdminUserForm getForm(AdminUser adminUser) {
-        return new AdminUserForm();
+        return new AdminUserForm().toForm(adminUser);
     }
 }
