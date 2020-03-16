@@ -2,6 +2,7 @@ package com.genius.coder.education.user.controller;
 
 import com.genius.coder.base.controller.VueController;
 import com.genius.coder.base.form.BaseDataResponse;
+import com.genius.coder.education.auth.VerificationCode;
 import com.genius.coder.education.redis.RedisService;
 import com.genius.coder.education.user.domain.AdminUser;
 import com.genius.coder.education.user.form.AdminUserForm;
@@ -10,10 +11,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("/user")
 @Api(tags = "系统用户接口")
 public class AdminUserController extends VueController<AdminUser,String> {
 
@@ -21,6 +26,15 @@ public class AdminUserController extends VueController<AdminUser,String> {
 
     public AdminUserController(RedisService redisService) {
         this.redisService = redisService;
+    }
+
+    @GetMapping("/verifyCode")
+    public void verifyCode(HttpSession session, HttpServletResponse resp) throws IOException {
+        VerificationCode code = new VerificationCode();
+        BufferedImage image = code.getImage();
+        String text = code.getText();
+        session.setAttribute("verify_code", text);
+        VerificationCode.output(image,resp.getOutputStream());
     }
 
     @GetMapping("info/{id}")
@@ -44,7 +58,7 @@ public class AdminUserController extends VueController<AdminUser,String> {
             return BaseDataResponse.fail().msg("验证码错误!");
         }
         AdminUser adminUser = service.findOneOrElseThrow(userPhoneForm.getUserId());
-        adminUser.setPhoneNo(userPhoneForm.getPhoneNum());
+        adminUser.setPhoneNum(userPhoneForm.getPhoneNum());
         service.save(adminUser);
         return BaseDataResponse.ok().msg("绑定手机成功!");
     }

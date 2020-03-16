@@ -22,7 +22,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -52,7 +51,6 @@ import java.util.Map;
 import java.util.Optional;
 
 @EnableJpaAuditing
-@EnableResourceServer
 @EnableConfigurationProperties(TokenRedisProperties.class)
 @SpringBootApplication
 @EnableSwagger2

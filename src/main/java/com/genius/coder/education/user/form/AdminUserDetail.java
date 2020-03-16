@@ -1,12 +1,15 @@
 package com.genius.coder.education.user.form;
 
+import com.genius.coder.education.user.enums.LoginTypeEnum;
 import com.genius.coder.education.user.enums.StatusEnum;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -18,17 +21,29 @@ import java.util.Collections;
 public class AdminUserDetail implements UserDetails, Serializable {
 
     private AdminUserForm user;
-
+    private String username;
     private String password;
 
     public AdminUserDetail(AdminUserForm user) {
         Assert.notNull(user, "用户信息不能为空");
         this.user = user;
+        if(user.getLoginType() == LoginTypeEnum.web){
+            this.username = user.getUserName();
+        }else {
+            this.username = user.getPhoneNum();
+        }
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        for(RoleForm form : this.user.getRoles()) {
+            if (form.getName() != null) {
+                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(form.getName());
+                authorities.add(authority);
+            }
+        }
+        return authorities;
     }
 
     @Override
@@ -38,7 +53,7 @@ public class AdminUserDetail implements UserDetails, Serializable {
 
     @Override
     public String getUsername() {
-        return user.getPhoneNum();
+        return this.username;
     }
 
     @Override

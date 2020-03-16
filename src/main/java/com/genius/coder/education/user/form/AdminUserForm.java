@@ -3,6 +3,7 @@ package com.genius.coder.education.user.form;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.genius.coder.base.form.BaseForm;
 import com.genius.coder.education.user.domain.AdminUser;
+import com.genius.coder.education.user.enums.LoginTypeEnum;
 import com.genius.coder.education.user.enums.StatusEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,6 +12,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author GaoWeicai.(lili14520 @ gmail.com)
@@ -22,6 +24,8 @@ import java.time.LocalDateTime;
 public class AdminUserForm extends BaseForm<AdminUser, String> implements Serializable {
 
     private String id;
+
+    private String userName;
 
     @ApiModelProperty("密码")
     @JsonIgnore
@@ -39,15 +43,19 @@ public class AdminUserForm extends BaseForm<AdminUser, String> implements Serial
     @ApiModelProperty("创建时间")
     private LocalDateTime createdDate;
 
+    private LoginTypeEnum loginType;
+
     //微信unionid
     private String unionid;
 
     private String openid;
     //性别
-    private Integer sex;
+    private Integer gander;
 
     //头像
     private String headimgurl;
+
+    private List<RoleForm> roles;
 
     @Override
     public AdminUserForm toForm(AdminUser entity) {

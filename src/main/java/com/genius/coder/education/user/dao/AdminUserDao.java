@@ -12,5 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface AdminUserDao extends BaseRepository<AdminUser,String> {
 
     AdminUser findByUnionid(String unionid);
+    AdminUser findByUserName(String userName);
 
 }

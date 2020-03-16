@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public enum LoginTypeEnum implements StringRemarkEnum {
 
-    password("密码登录"), phone("手机验证码登录");
+    password("密码登录"), phone("手机验证码登录"), web("网页登录"),weChat("微信登录");
 
     private String remark;
 }
