@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Slf4j
 public class JwtUtil {
-    public static final String TOKEN_HEADER = "Authorization";
+    public static final String TOKEN_HEADER = "jwt-token";
     public static final String TOKEN_PREFIX = "Bearer ";
 
     public static final String SUBJECT = "congge";
@@ -48,9 +48,10 @@ public class JwtUtil {
         try{
             final Claims claims = getClaimsFromToken(token);
             String id = String.valueOf(claims.get(CLAIM_KEY_USER_ID));
-            String username = String.valueOf(CLAIM_KEY_USERNAME);
+            String username = String.valueOf(claims.get(CLAIM_KEY_USERNAME));
             List<String> authorities = (List<String>) claims.get(CLAIM_KEY_AUTHORITIES);
-            user = new AdminUserDetail(id,username,authorities);
+            String name = String.valueOf(claims.get(CLAIM_KEY_NAME));
+            user = new AdminUserDetail(id,username,name,authorities);
         }catch (Exception ex){
             ex.printStackTrace();
         }
@@ -227,6 +228,7 @@ public class JwtUtil {
         claims.put(CLAIM_KEY_NAME, userDetail.getName());
         claims.put(CLAIM_KEY_CREATED, new Date());
         claims.put(CLAIM_KEY_USER_ID, userDetail.getId());
+        claims.put(CLAIM_KEY_AUTHORITIES,userDetail.getAuthorities());
         return claims;
     }
 

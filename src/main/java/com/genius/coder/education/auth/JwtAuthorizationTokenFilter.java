@@ -33,7 +33,7 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException {
-        String authToken = request.getHeader("token");
+        String authToken = request.getHeader(JwtUtil.TOKEN_HEADER);
         if(StringUtils.isNotBlank(authToken)) {
             AdminUserDetail userDetail = jwtTokenUtil.getUserFromToken(authToken);
             if (null != userDetail) {

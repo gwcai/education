@@ -62,11 +62,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 按照jwt的规定，最后请求的时候应该是 `Bearer token`
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
-        String tokenStr = JwtUtil.TOKEN_PREFIX + token;
-        response.setHeader("token",tokenStr);
+        //String tokenStr = JwtUtil.TOKEN_PREFIX + token;
+        response.setHeader(JwtUtil.TOKEN_HEADER,token);
 
-        userDetails.setPassword(null);
-        BaseDataResponse ok = BaseDataResponse.ok().token(token).data(userDetails).msg("登录成功");
+        //userDetails.setPassword(null);
+        BaseDataResponse ok = BaseDataResponse.ok().token(token).msg("登录成功");
         String s = new ObjectMapper().writeValueAsString(ok);
         out.write(s);
         out.flush();

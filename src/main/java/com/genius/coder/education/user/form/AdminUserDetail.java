@@ -11,10 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author GaoWeicai.(lili14520 @ gmail.com)
@@ -28,10 +25,13 @@ public class AdminUserDetail implements UserDetails, Serializable {
     private String name;
     private String id;
     private Collection<? extends GrantedAuthority> authorities;
+    private List<String> roles;
 
-    public AdminUserDetail(String id,String userName,List<String> authorities ){
+    public AdminUserDetail(String id,String userName,String name,List<String> authorities ){
         this.id = id;
         this.username = userName;
+        this.roles = authorities;
+        this.name = name;
         Set<SimpleGrantedAuthority> simpleGrantedAuthorities = new HashSet<>();
         if(CollectionUtils.isNotEmpty(authorities)){
             for(String code : authorities){
@@ -54,12 +54,13 @@ public class AdminUserDetail implements UserDetails, Serializable {
         }
         this.id = user.getId();
         this.name = user.getName();
-
+        this.roles = new ArrayList<>();
         Set<SimpleGrantedAuthority> simpleGrantedAuthorities = new HashSet<>();
         for(RoleForm form : user.getRoles()) {
             if (form.getName() != null) {
                 SimpleGrantedAuthority authority = new SimpleGrantedAuthority(form.getName());
                 simpleGrantedAuthorities.add(authority);
+                this.roles.add(form.getName());
             }
         }
         this.authorities = simpleGrantedAuthorities;
@@ -73,6 +74,10 @@ public class AdminUserDetail implements UserDetails, Serializable {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password){
+        this.password = password;
     }
 
     @Override

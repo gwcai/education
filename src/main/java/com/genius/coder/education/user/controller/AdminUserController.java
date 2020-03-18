@@ -5,12 +5,16 @@ import com.genius.coder.base.form.BaseDataResponse;
 import com.genius.coder.education.auth.VerificationCode;
 import com.genius.coder.education.redis.RedisService;
 import com.genius.coder.education.user.domain.AdminUser;
+import com.genius.coder.education.user.form.AdminUserDetail;
 import com.genius.coder.education.user.form.AdminUserForm;
 import com.genius.coder.education.user.form.UserPhoneForm;
+import com.genius.coder.education.util.JwtUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
@@ -21,6 +25,8 @@ import java.util.Objects;
 @RequestMapping("/user")
 @Api(tags = "系统用户接口")
 public class AdminUserController extends VueController<AdminUser,String> {
+    @Autowired
+    private JwtUtil jwtUtil;
 
     private final RedisService redisService;
 
@@ -37,10 +43,13 @@ public class AdminUserController extends VueController<AdminUser,String> {
         VerificationCode.output(image,resp.getOutputStream());
     }
 
-    @GetMapping("info/{id}")
-    @ApiOperation("根据用户ID获取用户信息")
-    public AdminUserForm getUserById(@PathVariable String id) {
-        return getForm(service.findOneOrElseThrow(id));
+    @GetMapping("info")
+    @ApiOperation("根据用户token获取用户信息")
+    public AdminUserDetail getUserById(HttpServletRequest request) {
+        String authToken = request.getHeader(JwtUtil.TOKEN_HEADER);
+        AdminUserDetail userDetail = jwtUtil.getUserFromToken(authToken);
+        userDetail.setPassword(null);
+        return userDetail;
     }
 
     /***

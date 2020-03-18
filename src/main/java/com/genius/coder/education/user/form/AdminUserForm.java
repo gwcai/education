@@ -1,6 +1,7 @@
 package com.genius.coder.education.user.form;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.genius.coder.base.annotation.InnerForm;
 import com.genius.coder.base.form.BaseForm;
 import com.genius.coder.education.user.domain.AdminUser;
 import com.genius.coder.education.user.enums.LoginTypeEnum;
@@ -55,6 +56,7 @@ public class AdminUserForm extends BaseForm<AdminUser, String> implements Serial
     //头像
     private String headimgurl;
 
+    @InnerForm
     private List<RoleForm> roles;
 
     @Override
