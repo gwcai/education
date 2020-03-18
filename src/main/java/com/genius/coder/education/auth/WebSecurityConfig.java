@@ -6,11 +6,11 @@ import com.genius.coder.education.user.dao.AdminUserDao;
 import com.genius.coder.education.user.domain.AdminUser;
 import com.genius.coder.education.user.form.AdminUserDetail;
 import com.genius.coder.education.user.form.AdminUserForm;
+import com.genius.coder.education.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,6 +24,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -39,31 +40,27 @@ import java.io.PrintWriter;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     //@Autowired
     //VerificationCodeFilter verificationCodeFilter;
+    @Autowired
+    private JwtAuthorizationTokenFilter jwtAuthorizationFilter;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/login","/css/**","/js/**","/index.html","/img/**","/fonts/**","/favicon.ico","/user/verifyCode","/wx",
-                "/doLogin","/api/**");
+        web.ignoring().antMatchers("/login","/css/**","/js/**","/index.html","/img/**"
+                ,"/fonts/**","/favicon.ico","/user/verifyCode","/wx");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.headers().frameOptions().sameOrigin();
-        //http.addFilterBefore(verificationCodeFilter,UsernamePasswordAuthenticationFilter.class);
-//        http.authorizeRequests().antMatchers(HttpMethod.GET).permitAll()
-//                .antMatchers(HttpMethod.POST).permitAll()
-//                .antMatchers("/api/**").permitAll();
-
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
+                //.anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .loginProcessingUrl("/auth/login")
                 .loginPage("/login")
-                .successHandler(loginSuccessHandler())
-                .failureHandler(loginFailureHandler())
                 .permitAll()
                 .and()
                 .logout()
@@ -73,9 +70,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies("JSESSIONID")
                 .logoutSuccessHandler(logoutSuccessHandler())
                 .and().csrf().disable()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager()));
+                .addFilter(new JwtAuthenticationFilter(authenticationManager()));
         http.httpBasic().disable();
+
+        http.rememberMe().rememberMeParameter("remember-me")
+                .userDetailsService(userDetailsService()).tokenValiditySeconds(JwtUtil.EXPIRITION);
+
+        http.exceptionHandling()
+                .and().addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Autowired
@@ -88,44 +90,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public BCryptPasswordEncoder passwordEncoder() { //密码加密
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationFailureHandler loginFailureHandler(){
-        return (req, resp, exception) -> {
-            resp.setContentType("application/json;charset=utf-8");
-            PrintWriter out = resp.getWriter();
-            BaseDataResponse respBean = BaseDataResponse.fail().msg("登录失败!");
-            if (exception instanceof LockedException) {
-                respBean.setMsg("账户被锁定，请联系管理员!");
-            } else if (exception instanceof CredentialsExpiredException) {
-                respBean.setMsg("密码过期，请联系管理员!");
-            } else if (exception instanceof AccountExpiredException) {
-                respBean.setMsg("账户过期，请联系管理员!");
-            } else if (exception instanceof DisabledException) {
-                respBean.setMsg("账户被禁用，请联系管理员!");
-            } else if (exception instanceof BadCredentialsException) {
-                respBean.setMsg("用户名或者密码输入错误，请重新输入!");
-            }
-            out.write(new ObjectMapper().writeValueAsString(respBean));
-            out.flush();
-            out.close();
-        };
-    }
-
-    @Bean
-    public AuthenticationSuccessHandler loginSuccessHandler() {
-        return (request, response, authentication) -> {
-            AdminUser userDetails = (AdminUser) authentication.getPrincipal();
-            response.setContentType("application/json;charset=utf-8");
-            PrintWriter out = response.getWriter();
-            userDetails.setPassword(null);
-            BaseDataResponse ok = BaseDataResponse.ok().data(userDetails).msg("登录成功");
-            String s = new ObjectMapper().writeValueAsString(ok);
-            out.write(s);
-            out.flush();
-            out.close();
-        };
     }
 
     @Bean
@@ -156,4 +120,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             }
         };
     }
+
+//    public static void main(String[] args){
+//        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+//        String pass = passwordEncoder.encode("111111");
+//        System.out.println(pass);
+//    }
 }

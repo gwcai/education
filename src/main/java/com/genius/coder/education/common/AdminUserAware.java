@@ -19,7 +19,7 @@ public class AdminUserAware implements AuditorAware<String> {
     public Optional<String> getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof OAuth2Authentication) {
-            return Optional.of(((AdminUserDetail) ((OAuth2Authentication) authentication).getUserAuthentication().getPrincipal()).getUser().getId());
+            return Optional.of(((AdminUserDetail) ((OAuth2Authentication) authentication).getUserAuthentication().getPrincipal()).getId());
         }
         return Optional.empty();
     }

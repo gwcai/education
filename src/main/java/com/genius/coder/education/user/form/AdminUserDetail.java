@@ -1,54 +1,78 @@
 package com.genius.coder.education.user.form;
 
 import com.genius.coder.education.user.enums.LoginTypeEnum;
-import com.genius.coder.education.user.enums.StatusEnum;
+import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author GaoWeicai.(lili14520 @ gmail.com)
  * @date 2020/3/5
  */
 @NoArgsConstructor
+@Data
 public class AdminUserDetail implements UserDetails, Serializable {
-
-    private AdminUserForm user;
     private String username;
     private String password;
+    private String name;
+    private String id;
+    private Collection<? extends GrantedAuthority> authorities;
+
+    public AdminUserDetail(String id,String userName,List<String> authorities ){
+        this.id = id;
+        this.username = userName;
+        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = new HashSet<>();
+        if(CollectionUtils.isNotEmpty(authorities)){
+            for(String code : authorities){
+                SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(code);
+                simpleGrantedAuthorities.add(simpleGrantedAuthority);
+            }
+        }
+        this.authorities = simpleGrantedAuthorities;
+    }
 
     public AdminUserDetail(AdminUserForm user) {
         Assert.notNull(user, "用户信息不能为空");
-        this.user = user;
-        if(user.getLoginType() == LoginTypeEnum.web){
+        if(user.getLoginType() == LoginTypeEnum.password){
             this.username = user.getUserName();
         }else {
             this.username = user.getPhoneNum();
         }
+        if(StringUtils.isNotBlank(user.getPassword())) {
+            this.password = user.getPassword();
+        }
+        this.id = user.getId();
+        this.name = user.getName();
+
+        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = new HashSet<>();
+        for(RoleForm form : user.getRoles()) {
+            if (form.getName() != null) {
+                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(form.getName());
+                simpleGrantedAuthorities.add(authority);
+            }
+        }
+        this.authorities = simpleGrantedAuthorities;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        for(RoleForm form : this.user.getRoles()) {
-            if (form.getName() != null) {
-                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(form.getName());
-                authorities.add(authority);
-            }
-        }
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return password == null ? user.getPassword() : password;
+        return password;
     }
 
     @Override
@@ -63,7 +87,7 @@ public class AdminUserDetail implements UserDetails, Serializable {
 
     @Override
     public boolean isAccountNonLocked() {
-        return user.getStatus() == StatusEnum.ENABLE;
+        return true;
     }
 
     @Override
@@ -73,14 +97,6 @@ public class AdminUserDetail implements UserDetails, Serializable {
 
     @Override
     public boolean isEnabled() {
-        return user.getStatus() == StatusEnum.ENABLE;
-    }
-
-    public AdminUserForm getUser() {
-        return user;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+        return true;
     }
 }

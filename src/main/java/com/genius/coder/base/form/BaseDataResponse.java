@@ -1,6 +1,7 @@
 package com.genius.coder.base.form;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.springframework.validation.BindingResult;
 
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.io.Serializable;
  * @author GaoWeicai.(lili14520 @ gmail.com)
  * @date 2020/3/5
  */
+@Data
 public class BaseDataResponse implements Serializable, Cloneable {
     private static final int OK_CODE = 0;
     private static final int FAIL_CODE = 1;
@@ -18,6 +20,7 @@ public class BaseDataResponse implements Serializable, Cloneable {
             value = "成功代码",
             notes = "0代表成功，1代表失败，2代表空"
     )
+    private String token;
     private int code;
     private String msg;
     private String detail;
@@ -51,6 +54,11 @@ public class BaseDataResponse implements Serializable, Cloneable {
         return this;
     }
 
+    public BaseDataResponse token(String token) {
+        this.token = token;
+        return this;
+    }
+
     public BaseDataResponse detail(String detail) {
         this.detail = detail;
         return this;
@@ -65,38 +73,6 @@ public class BaseDataResponse implements Serializable, Cloneable {
         this.msg = "操作失败";
         this.detail = e.getMessage();
         return this;
-    }
-
-    public int getCode() {
-        return this.code;
-    }
-
-    public String getMsg() {
-        return this.msg;
-    }
-
-    public String getDetail() {
-        return this.detail;
-    }
-
-    public Object getData() {
-        return this.data;
-    }
-
-    public void setCode(final int code) {
-        this.code = code;
-    }
-
-    public void setMsg(final String msg) {
-        this.msg = msg;
-    }
-
-    public void setDetail(final String detail) {
-        this.detail = detail;
-    }
-
-    public void setData(final Object data) {
-        this.data = data;
     }
 
     public boolean equals(final Object o) {
