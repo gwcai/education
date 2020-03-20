@@ -447,6 +447,4 @@ public class EducationRedisTokenStore implements TokenStore {
         }
         return Collections.<OAuth2AccessToken>unmodifiableCollection(accessTokens);
     }
-
-
 }

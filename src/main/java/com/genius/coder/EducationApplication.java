@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
@@ -55,6 +56,7 @@ import java.util.Optional;
 @SpringBootApplication
 @EnableSwagger2
 @EnableJpaRepositories(repositoryBaseClass = BaseRepositoryImpl.class)
+@EnableWebSecurity
 public class EducationApplication implements WebMvcConfigurer{
 
     public static void main(String[] args) {

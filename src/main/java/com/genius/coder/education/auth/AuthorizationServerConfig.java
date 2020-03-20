@@ -32,7 +32,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()//配置内存中，也可以是数据库
                 .withClient("education")//clientId
-                .secret("education-secret")
+                .secret("123456")
                 .accessTokenValiditySeconds(24*3600)//token有效时间  秒
                 .authorizedGrantTypes("refresh_token", "password", "authorization_code")//token模式
                 .scopes("all")//限制允许的权限配置
