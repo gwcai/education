@@ -23,8 +23,8 @@ public class AdminUserDetailService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String unionid) throws UsernameNotFoundException {
-        AdminUser user = adminUserDao.findByUnionid(unionid);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        AdminUser user = adminUserDao.findByUserName(username);
         if (user == null) {
             throw new UsernameNotFoundException("用户不存在！");
         }

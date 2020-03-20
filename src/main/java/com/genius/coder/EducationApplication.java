@@ -55,18 +55,10 @@ import java.util.Optional;
 @SpringBootApplication
 @EnableSwagger2
 @EnableJpaRepositories(repositoryBaseClass = BaseRepositoryImpl.class)
-public class EducationApplication extends ResourceServerConfigurerAdapter implements WebMvcConfigurer{
+public class EducationApplication implements WebMvcConfigurer{
 
     public static void main(String[] args) {
         SpringApplication.run(EducationApplication.class, args);
-    }
-
-    @Autowired
-    private TokenStore tokenStore;
-
-    @Override
-    public void configure(ResourceServerSecurityConfigurer resources) {
-        resources.stateless(true).tokenStore(tokenStore);
     }
 
     /**
@@ -78,10 +70,6 @@ public class EducationApplication extends ResourceServerConfigurerAdapter implem
         WebMvcConfigurer.super.addArgumentResolvers(argumentResolvers);
     }
 
-    @Bean
-    public AuditorAware<? extends Serializable> auditorProvider() {
-        return new AdminUserAware();
-    }
 
     @Bean
     public CorsFilter corsFilter() {
