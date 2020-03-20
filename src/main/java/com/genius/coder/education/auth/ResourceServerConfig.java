@@ -6,15 +6,23 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.codec.Base64;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.UnapprovedClientAuthenticationException;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**资源服务配置
  * @author GaoWeicai.(lili14520 @ gmail.com)
@@ -65,7 +73,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Bean
     public SavedRequestAwareAuthenticationSuccessHandler loginSuccessHandler(){
-        return (request,response,authentication) ->{
+        return new SavedRequestAwareAuthenticationSuccessHandler(){
             @Autowired
             private ObjectMapper objectMapper;
 
@@ -107,7 +115,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                     throw new UnapprovedClientAuthenticationException("clientSecret不匹配:" + clientId);
                 }
 
-                TokenRequest tokenRequest = new TokenRequest(MapUtils.EMPTY_MAP, clientId, clientDetails.getScope(), "custom");
+                TokenRequest tokenRequest = new TokenRequest(MapUtils.EMPTY_SORTED_MAP, clientId, clientDetails.getScope(), "custom");
 
                 OAuth2Request oAuth2Request = tokenRequest.createOAuth2Request(clientDetails);
 
@@ -137,7 +145,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         }
     }
 
-    public loginFailureHandler(){
-
+    public AuthenticationFailureHandler loginFailureHandler(){
+        return new WebAuthenticationFailureHandler();
     }
 }
