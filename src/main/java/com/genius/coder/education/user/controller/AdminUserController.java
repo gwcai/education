@@ -2,16 +2,17 @@ package com.genius.coder.education.user.controller;
 
 import com.genius.coder.base.controller.VueController;
 import com.genius.coder.base.form.BaseDataResponse;
-import com.genius.coder.education.auth.VerificationCode;
+import com.genius.coder.education.auth.verifycode.VerificationCode;
 import com.genius.coder.education.redis.RedisService;
 import com.genius.coder.education.user.domain.AdminUser;
 import com.genius.coder.education.user.form.AdminUserDetail;
 import com.genius.coder.education.user.form.AdminUserForm;
 import com.genius.coder.education.user.form.UserPhoneForm;
-import com.genius.coder.education.util.JwtUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +27,7 @@ import java.util.Objects;
 @Api(tags = "系统用户接口")
 public class AdminUserController extends VueController<AdminUser,String> {
     @Autowired
-    private JwtUtil jwtUtil;
+    private TokenStore tokenStore;
 
     private final RedisService redisService;
 
@@ -45,9 +46,8 @@ public class AdminUserController extends VueController<AdminUser,String> {
 
     @GetMapping("info")
     @ApiOperation("根据用户token获取用户信息")
-    public AdminUserDetail getUserById(HttpServletRequest request) {
-        String authToken = request.getHeader(JwtUtil.TOKEN_HEADER);
-        AdminUserDetail userDetail = jwtUtil.getUserFromToken(authToken);
+    public AdminUserDetail getUserById() {
+        AdminUserDetail userDetail = (AdminUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userDetail.setPassword(null);
         return userDetail;
     }

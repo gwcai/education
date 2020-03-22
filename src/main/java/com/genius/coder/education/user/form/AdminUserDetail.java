@@ -1,5 +1,6 @@
 package com.genius.coder.education.user.form;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.genius.coder.education.user.enums.LoginTypeEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;

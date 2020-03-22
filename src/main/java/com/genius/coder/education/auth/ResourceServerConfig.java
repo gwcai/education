@@ -132,6 +132,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(oAuth2Request, authentication);
 
                 OAuth2AccessToken token = authorizationServerTokenServices.createAccessToken(oAuth2Authentication);
+                tokenStore.storeAccessToken(token, oAuth2Authentication);//保存token到redis
                 response.setContentType("application/json;charset=UTF-8");
                 response.getWriter().write(objectMapper.writeValueAsString(token));
             }

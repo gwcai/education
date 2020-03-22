@@ -1,4 +1,4 @@
-package com.genius.coder.education.auth;
+package com.genius.coder.education.auth.verifycode;
 
 import org.springframework.stereotype.Component;
 
